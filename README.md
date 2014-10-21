@@ -1,7 +1,7 @@
 Asteroids: Next-Dimension
 ========================
 
-Implementation of Asteroids in raw WebGL
+Implementation of Asteroids in WebGL
 
 initShaders[2].js, MV.js, webgl-utils.js credit Edward Angel, University of New Mexico
 
