@@ -8,6 +8,7 @@ var thetaLoc;
 var pos = vec2(0,0);
 var posLoc;
 var thrustOn = false;
+var thrustForce = .01;
 
 
 //up, down, left, right
@@ -140,13 +141,16 @@ function rotateShip(){
 }
 
 function moveShip(){
-
+    
 }
 
 function thrust(){
     if (thrustOn){
-        pos[1] -= .01;
-        console.log("THRUST!!");
+        /* phase shift by -90 degrees since the ship 
+        starts facing in -y direction 
+        I could use sin and -cos but that looks counterintuitive */
+        pos[0] += thrustForce * Math.cos(radians(90 - theta[2]));
+        pos[1] += thrustForce * Math.sin(radians(90 - theta[2]));
     }
 }
 
@@ -157,4 +161,8 @@ function toVec3(vertices){
         points.push(point);
     }
     return points;
+}
+
+function radians(num){
+    return num * Math.PI / 180.0;
 }
