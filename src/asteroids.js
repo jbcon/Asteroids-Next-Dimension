@@ -11,7 +11,7 @@ var thrustOn = false;
 var thrustForce = .05;
 var rotateSpeed = 3;
 var vel = vec2(0,0);
-var deceleration = .00005;
+var deceleration = .001;
 
 
 //up, down, left, right
@@ -147,17 +147,32 @@ function moveShip(){
     pos[0] -= vel[0];
     pos[1] -= vel[1];
 
-    if (Math.abs(vel[0]) > 0){
+    if (vel[0] > 0){
         vel[0] -= deceleration;
+        if (vel[0] < 0){
+            vel[0] = 0;
+        }
+    }
+    else if (vel[0] < 0){
+        vel[0] += deceleration;
+        if (vel[0] > 0){
+            vel[0] = 0;
+        }
     }
     else{
         vel[0] = 0;
     }
-    if (Math.abs(vel[1]) > 0){
+    if (vel[1] > 0){
         vel[1] -= deceleration;
+        if (vel[1] < 0){
+            vel[1] = 0;
+        }
     }
-    else{
-        vel[1] = 0;
+    else if (vel[1] < 0){
+        vel[1] += deceleration;
+        if (vel[1] > 0){
+            vel[1] = 0;
+        }
     }
     console.log(vel);
 }
