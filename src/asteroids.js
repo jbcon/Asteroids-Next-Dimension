@@ -8,7 +8,10 @@ var thetaLoc;
 var pos = vec2(0,0);
 var posLoc;
 var thrustOn = false;
-var thrustForce = .01;
+var thrustForce = .05;
+var rotateSpeed = 3;
+var vel = vec2(0,0);
+var deceleration = .00005;
 
 
 //up, down, left, right
@@ -128,11 +131,11 @@ function render() {
 
 function rotateShip(){
 	if (moveVec[2]){
-        theta[2]++;
+        theta[2] += rotateSpeed;
         console.log("LEFT!!");
     }
     if (moveVec[3]){
-        theta[2]--;
+        theta[2] -= rotateSpeed;
         console.log("RIGHT!!"); 
     }
     if (theta[2] >= 360){
@@ -141,7 +144,22 @@ function rotateShip(){
 }
 
 function moveShip(){
-    
+    pos[0] -= vel[0];
+    pos[1] -= vel[1];
+
+    if (Math.abs(vel[0]) > 0){
+        vel[0] -= deceleration;
+    }
+    else{
+        vel[0] = 0;
+    }
+    if (Math.abs(vel[1]) > 0){
+        vel[1] -= deceleration;
+    }
+    else{
+        vel[1] = 0;
+    }
+    console.log(vel);
 }
 
 function thrust(){
@@ -149,8 +167,8 @@ function thrust(){
         /* phase shift by -90 degrees since the ship 
         starts facing in -y direction 
         I could use sin and -cos but that looks counterintuitive */
-        pos[0] += thrustForce * Math.cos(radians(90 - theta[2]));
-        pos[1] += thrustForce * Math.sin(radians(90 - theta[2]));
+        vel[0] = thrustForce * Math.cos(radians(90 + theta[2]));
+        vel[1] = thrustForce * Math.sin(radians(90 + theta[2]));
     }
 }
 

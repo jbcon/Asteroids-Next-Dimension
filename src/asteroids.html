@@ -17,6 +17,7 @@ void main()
 	vec3 c = cos(angles);
 	vec3 s = sin(angles);
 	float ctx = 1.0/tan(angles.x);
+	float scaleFactor = 0.25;
 
 
 	//it's column-major, don't forget!!
@@ -45,7 +46,12 @@ void main()
 							0.0, 0.0, 1.0, 0.0,
 							-pos.x, -pos.y, 0.0, 1.0 );
 
-    gl_Position = tx * rz * vPosition;
+	mat4 scale = mat4( scaleFactor, 0.0, 0.0, 0.0,
+						0.0, scaleFactor, 0.0, 0.0,
+						0.0, 0.0, scaleFactor, 0.0,
+						0.0, 0.0, 0.0, 1.0 );
+
+    gl_Position = scale * tx * rz * vPosition;
 
     fColor = vColor;
 
