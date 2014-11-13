@@ -17,7 +17,7 @@ void main()
 	vec3 c = cos(angles);
 	vec3 s = sin(angles);
 	float ctx = 1.0/tan(angles.x);
-	float scaleFactor = 0.25;
+	float scaleFactor = 1.0/20.0;
 
 
 	//it's column-major, don't forget!!
@@ -71,6 +71,7 @@ void main()
 <script type="text/javascript" src="../lib/webgl-utils.js"></script>
 <script type="text/javascript" src="../lib/initShaders.js"></script>
 <script type="text/javascript" src="../lib/MV.js"></script>
+<script type="text/javascript" src="ship.js"></script>
 <script type="text/javascript" src="asteroids.js"></script>
 <script type="text/javascript" src="data_points.js"></script>
 </head>
