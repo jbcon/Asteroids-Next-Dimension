@@ -3,6 +3,7 @@ var gl;
 var points;
 var colors = [];
 var theta = [0,0,0];
+var lastTheta = [0,0,0];
 var thetaLoc;
 
 var pos = vec2(0,0);
@@ -11,7 +12,7 @@ var thrustOn = false;
 var thrustForce = .05;
 var rotateSpeed = 3;
 var vel = vec2(0,0);
-var deceleration = .001;
+var deceleration = .0005;
 
 
 //up, down, left, right
@@ -148,13 +149,13 @@ function moveShip(){
     pos[1] -= vel[1];
 
     if (vel[0] > 0){
-        vel[0] -= deceleration;
+        vel[0] -= deceleration * Math.cos(radians(90 + lastTheta[2]));
         if (vel[0] < 0){
             vel[0] = 0;
         }
     }
     else if (vel[0] < 0){
-        vel[0] += deceleration;
+        vel[0] -= deceleration * Math.cos(radians(90 + lastTheta[2]));
         if (vel[0] > 0){
             vel[0] = 0;
         }
@@ -163,13 +164,13 @@ function moveShip(){
         vel[0] = 0;
     }
     if (vel[1] > 0){
-        vel[1] -= deceleration;
+        vel[1] -= deceleration * Math.sin(radians(90 + lastTheta[2]));
         if (vel[1] < 0){
             vel[1] = 0;
         }
     }
     else if (vel[1] < 0){
-        vel[1] += deceleration;
+        vel[1] -= deceleration * Math.sin(radians(90 + lastTheta[2]));
         if (vel[1] > 0){
             vel[1] = 0;
         }
@@ -184,6 +185,7 @@ function thrust(){
         I could use sin and -cos but that looks counterintuitive */
         vel[0] = thrustForce * Math.cos(radians(90 + theta[2]));
         vel[1] = thrustForce * Math.sin(radians(90 + theta[2]));
+        lastTheta = theta.slice(0);
     }
 }
 
