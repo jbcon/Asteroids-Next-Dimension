@@ -1,8 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-<script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec4 vPosition;
 attribute vec4 vColor;
 varying vec4 fColor;
@@ -56,29 +51,3 @@ void main()
     fColor = vColor;
 
 }
-</script>
-
-<script id="fragment-shader" type="x-shader/x-fragment">
-precision mediump float;
-varying vec4 fColor;
-
-void main()
-{
-    gl_FragColor = fColor;
-}
-</script>
-
-<script type="text/javascript" src="../lib/webgl-utils.js"></script>
-<script type="text/javascript" src="../lib/initShaders.js"></script>
-<script type="text/javascript" src="../lib/MV.js"></script>
-<script type="text/javascript" src="ship.js"></script>
-<script type="text/javascript" src="asteroids.js"></script>
-<script type="text/javascript" src="data_points.js"></script>
-</head>
-
-<body>
-<canvas id="gl-canvas" width="512" height="512">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
-</body>
-</html>

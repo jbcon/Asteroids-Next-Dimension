@@ -2,6 +2,8 @@
 var gl;
 var ship;
 
+var asteroidArray = [];
+
 window.onload = function init()
 {
     var canvas = document.getElementById( "gl-canvas" );
@@ -16,33 +18,19 @@ window.onload = function init()
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
     gl.enable(gl.DEPTH_TEST);
     
-
+    //initializes ship-related graphics and physics variables
     ship = new Ship();
-
-
-    
-    /*// Load the data into the GPU
-    
-    var vBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(ship.points), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vPosition );*/
-
 
     //register user input with keyboard
     window.addEventListener("keydown", function() {
         switch(event.keyCode){
-            case 87:     //w
+            /*case 87:     //w
                 ship.moveVec[0] = true;
                 break;
             case 83:     //s
                 ship.moveVec[1] = true;
                 break;
+            */
             case 65:     //a
                 ship.moveVec[2] = true;
                 break;
@@ -56,12 +44,13 @@ window.onload = function init()
 
     window.addEventListener("keyup", function() {
         switch(event.keyCode){
-            case 87:     //w
+            /*case 87:     //w
                 ship.moveVec[0] = false;
                 break;
             case 83:     //s
                 ship.moveVec[1] = false;
                 break;
+            */
             case 65:     //a
                 ship.moveVec[2] = false;
                 break;

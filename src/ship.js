@@ -8,7 +8,7 @@ function Ship() {
 	        this.colors.push(vec4(0.5, 0.5, 0.5, 1), 1.0);
 	    }
 
-		this.program = initShaders( gl, "vertex-shader", "fragment-shader" );
+		this.program = initShaders( gl, "src/shaders/ship-vertex.glsl", "src/shaders/ship-fragment.glsl" );
 	    gl.useProgram( this.program );
 
 	    this.cBuffer = gl.createBuffer();
@@ -35,9 +35,9 @@ function Ship() {
 	this.thrustTheta = [0,0,0];
 	this.thetaLoc = gl.getUniformLocation(this.program, "theta");
 	this.pos = vec2(0,0);
-	this.posLoc = gl.getUniformLocation(this.program, "pos");;
+	this.posLoc = gl.getUniformLocation(this.program, "pos");
 	this.thrustOn = false;
-	this.thrustForce = .01;
+	this.thrustForce = .005;
 	this.rotateSpeed = 3;
 	this.vel = vec2(0,0);
 	this.velMax = vec2(.25,.25);
@@ -49,14 +49,11 @@ function Ship() {
 	        this.theta[0] += this.rotateSpeed;
 	        this.theta[1] += this.rotateSpeed
 	        this.theta[2] += this.rotateSpeed;
-	        console.log("LEFT!!");
 	    }
 	    if (this.moveVec[3]){
 	        this.theta[0] -= this.rotateSpeed;
 	        this.theta[1] -= this.rotateSpeed;
 	        this.theta[2] -= this.rotateSpeed;
-
-	        console.log("RIGHT!!"); 
 	    }
 	    if (this.theta[0] >= 360){
 	        this.theta[0] -= 360;
@@ -131,8 +128,4 @@ function Ship() {
 	    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 	    gl.drawArrays( gl.TRIANGLES, 0, this.points.length );
 	}
-
-	
-
-
 }
