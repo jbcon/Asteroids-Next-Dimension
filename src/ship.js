@@ -9,30 +9,21 @@ function Ship() {
 	    }
 
 		this.program = initShaders( gl, "src/shaders/ship-vertex.glsl", "src/shaders/ship-fragment.glsl" );
-	    gl.useProgram( this.program );
 
 	    this.cBuffer = gl.createBuffer();
-	    gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.STATIC_DRAW);
 
 	    this.vColor = gl.getAttribLocation(this.program, "vColor");
-	    gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0);
-	    gl.enableVertexAttribArray(this.vColor);
 
 		this.vBuffer = gl.createBuffer();
-	    gl.bindBuffer( gl.ARRAY_BUFFER, this.vBuffer );
-	    gl.bufferData( gl.ARRAY_BUFFER, flatten(this.points), gl.DYNAMIC_DRAW );
 	    
 	    this.vPosition = gl.getAttribLocation( this.program, "vPosition" );
-	    gl.vertexAttribPointer( this.vPosition, 3, gl.FLOAT, false, 0, 0 );
-	    gl.enableVertexAttribArray( this.vPosition );
 	}
 
 	this.initGraphics();
 
 	//physics stuff
-	this.theta = [0,0,0];
-	this.thrustTheta = [0,0,0];
+	this.theta = vec3(0,0,0);
+	this.thrustTheta = vec3(0,0,0);
 	this.thetaLoc = gl.getUniformLocation(this.program, "theta");
 	this.pos = vec2(0,0);
 	this.posLoc = gl.getUniformLocation(this.program, "pos");
@@ -41,7 +32,7 @@ function Ship() {
 	this.rotateSpeed = 3;
 	this.vel = vec2(0,0);
 	this.velMax = vec2(.25,.25);
-	this.deceleration = .001;
+	this.deceleration = .005;
 	this.moveVec = [false, false, false, false];
 
 	this.rotate = function (){
@@ -71,30 +62,30 @@ function Ship() {
 	    this.pos[1] -= this.vel[1];
 
 	    if (this.vel[0] > 0){
-	        this.vel[0] -= this.deceleration * Math.cos(radians(90 + this.thrustTheta[2]));
+	        this.vel[0] -= this.deceleration * this.vel[0];
 	        if (this.vel[0] < 0){
 	            this.vel[0] = 0;
 	        }
 	    }
 	    else if (this.vel[0] < 0){
-	        this.vel[0] -= this.deceleration * Math.cos(radians(90 + this.thrustTheta[2]));
+	        this.vel[0] -= this.deceleration * this.vel[0];
 	        if (this.vel[0] > 0){
 	            this.vel[0] = 0;
 	        }
 	    }
 	    if (this.vel[1] > 0){
-	        this.vel[1] -= this.deceleration * Math.sin(radians(90 + this.thrustTheta[2]));
+	        this.vel[1] -= this.deceleration * this.vel[1];
 	        if (this.vel[1] < 0){
 	            this.vel[1] = 0;
 	        }
 	    }
 	    else if (this.vel[1] < 0){
-	        this.vel[1] -= this.deceleration * Math.sin(radians(90 + this.thrustTheta[2]));
+	        this.vel[1] -= this.deceleration * this.vel[1];
 	        if (this.vel[1] > 0){
 	            this.vel[1] = 0;
 	        }
 	    }
-	    console.log(this.vel);
+	    //console.log(this.vel);
 	}
 
 	this.thrust = function(){
@@ -123,9 +114,22 @@ function Ship() {
 	}
 
 	this.render = function(){
+		gl.useProgram(this.program);
+
+	    gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
+	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
+		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0)
+		gl.enableVertexAttribArray(this.vColor);
+
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.vBuffer );
+	    gl.bufferData( gl.ARRAY_BUFFER, flatten(this.points), gl.DYNAMIC_DRAW );
+		gl.vertexAttribPointer( this.vPosition, 3, gl.FLOAT, false, 0, 0 );
+	    gl.enableVertexAttribArray(this.vPosition);
+
 		gl.uniform2fv(this.posLoc, this.pos);
 		gl.uniform3fv(this.thetaLoc, this.theta);
-	    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 	    gl.drawArrays( gl.TRIANGLES, 0, this.points.length );
+	  	gl.disableVertexAttribArray(this.vColor);
+	    gl.disableVertexAttribArray( this.vPosition );
 	}
 }

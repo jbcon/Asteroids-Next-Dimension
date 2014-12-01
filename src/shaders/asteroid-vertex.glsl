@@ -3,9 +3,6 @@ attribute vec4 vColor;
 varying vec4 fColor;
 uniform vec3 theta;
 uniform vec2 pos;
-uniform mat4 modelView;
-uniform mat4 projection;
-
 
 void main()
 {
@@ -13,7 +10,7 @@ void main()
 	vec3 c = cos(angles);
 	vec3 s = sin(angles);
 	float ctx = 1.0/tan(angles.x);
-	float scaleFactor = 1.0/20.0;
+	float scaleFactor = 5.0/20.0;
 
 
 	//it's column-major, don't forget!!
@@ -47,7 +44,7 @@ void main()
 						0.0, 0.0, scaleFactor, 0.0,
 						0.0, 0.0, 0.0, 1.0 );
 
-    gl_Position = scale * tx * rz * vPosition;
+    gl_Position = tx * ry * rx * vPosition;
 
     fColor = vColor;
 

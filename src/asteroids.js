@@ -2,10 +2,18 @@
 var gl;
 var ship;
 
+var obstacle;
 var asteroidArray = [];
 
-window.onload = function init()
-{
+var modelView, projection;
+var mvMatrix, pMatrix;
+var eye;
+var at;
+var up = vec3(0.0, 0.0 , 1.0);  //into positive z direction
+var aspect
+var cameraDistance;
+
+window.onload = function init(){
     var canvas = document.getElementById( "gl-canvas" );
 
     gl = WebGLUtils.setupWebGL( canvas );
@@ -21,16 +29,11 @@ window.onload = function init()
     //initializes ship-related graphics and physics variables
     ship = new Ship();
 
+    obstacle = new AsteroidModel();
+
     //register user input with keyboard
     window.addEventListener("keydown", function() {
         switch(event.keyCode){
-            /*case 87:     //w
-                ship.moveVec[0] = true;
-                break;
-            case 83:     //s
-                ship.moveVec[1] = true;
-                break;
-            */
             case 65:     //a
                 ship.moveVec[2] = true;
                 break;
@@ -44,13 +47,6 @@ window.onload = function init()
 
     window.addEventListener("keyup", function() {
         switch(event.keyCode){
-            /*case 87:     //w
-                ship.moveVec[0] = false;
-                break;
-            case 83:     //s
-                ship.moveVec[1] = false;
-                break;
-            */
             case 65:     //a
                 ship.moveVec[2] = false;
                 break;
@@ -61,22 +57,39 @@ window.onload = function init()
                 ship.thrustOn = false;
         }
     });
+
+    modelView = gl.getUniformLocation(ship.program,"modelView");
+    projection = gl.getUniformLocation(ship.program, "projection");
+    aspect = canvas.width/canvas.height;
+    cameraDistance = 1 
+
     render();
 };
 
 
-function render() {
+function render(){
 	ship.rotate();
     ship.move();
     ship.thrust();
-
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     ship.render();
+    obstacle.render();
+    updateCamera();
     window.requestAnimFrame(render);
 }
 
+function updateCamera(){
+    eyex = Math.cos(radians(90-ship.theta[2]));
+    eyey = Math.sin(radians(90-ship.theta[2]));
+    eye = vec3(eyex*cameraDistance+ship.pos[0], eyey*cameraDistance+ship.pos[1], 0.0);
+    mvMatrix = lookAt(eye, vec3(ship.pos[0], ship.pos[1], 0.0), up);
+    pMatrix = perspective(10, aspect, 0, 1 );
+    gl.uniformMatrix4fv(modelView, false, flatten(mvMatrix));
+    gl.uniformMatrix4fv(projection, false, flatten(pMatrix));
+}
 
 function toVec3(vertices){
-    points = new Array();
+    var points = new Array();
     for (var i = 0; i < vertices.length; i += 3){
         point = [vertices[i], vertices[i+1], vertices[i+2]];
         points.push(point);
