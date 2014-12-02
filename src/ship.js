@@ -28,7 +28,7 @@ function Ship() {
 	this.pos = vec2(0,0);
 	this.posLoc = gl.getUniformLocation(this.program, "pos");
 	this.thrustOn = false;
-	this.thrustForce = .005;
+	this.thrustForce = .01;
 	this.rotateSpeed = 3;
 	this.vel = vec2(0,0);
 	this.velMax = vec2(.25,.25);

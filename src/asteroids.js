@@ -30,6 +30,9 @@ window.onload = function init(){
     ship = new Ship();
 
     obstacle = new AsteroidModel();
+    for (var i = 0; i < 4; i++){
+        asteroidArray.push(new Asteroid(Math.random()*2-1, Math.random()*2-1, 3, 0.005));
+    }
 
     //register user input with keyboard
     window.addEventListener("keydown", function() {
@@ -73,7 +76,12 @@ function render(){
     ship.thrust();
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     ship.render();
-    obstacle.render();
+
+    for (var i = 0; i < asteroidArray.length; i++){
+        asteroidArray[i].move();
+        console.log(asteroidArray[i].trueDirection);
+        obstacle.render(asteroidArray[i]);
+    }
     updateCamera();
     window.requestAnimFrame(render);
 }
