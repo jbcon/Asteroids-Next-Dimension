@@ -37,6 +37,9 @@ window.onload = function init(){
     //register user input with keyboard
     window.addEventListener("keydown", function() {
         switch(event.keyCode){
+            case 87:
+                ship.thrustOn = true;
+                break;
             case 65:     //a
                 ship.moveVec[2] = true;
                 break;
@@ -50,6 +53,9 @@ window.onload = function init(){
 
     window.addEventListener("keyup", function() {
         switch(event.keyCode){
+            case 87:
+                ship.thrustOn = false;
+                break;
             case 65:     //a
                 ship.moveVec[2] = false;
                 break;
@@ -57,7 +63,7 @@ window.onload = function init(){
                 ship.moveVec[3] = false;
                 break;
             case 16:     //shift
-                ship.thrustOn = false;
+                break;
         }
     });
 
@@ -79,7 +85,6 @@ function render(){
 
     for (var i = 0; i < asteroidArray.length; i++){
         asteroidArray[i].move();
-        console.log(asteroidArray[i].trueDirection);
         obstacle.render(asteroidArray[i]);
     }
     updateCamera();

@@ -3,9 +3,6 @@ attribute vec4 vColor;
 varying vec4 fColor;
 uniform vec3 theta;
 uniform vec2 pos;
-uniform mat4 modelView;
-uniform mat4 projection;
-
 
 void main()
 {
