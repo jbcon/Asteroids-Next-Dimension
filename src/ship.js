@@ -85,10 +85,10 @@ function Ship() {
 	            this.vel[1] = 0;
 	        }
 	    }
-	    if (this.pos[0]-0.15 > 20 || this.pos[0]+0.15 < -20){
+	    if (this.pos[0]-0.2 > 20 || this.pos[0]+0.2 < -20){
 			this.pos[0] *= -1;
 		}
-		if (this.pos[1]-0.15 > 20 || this.pos[1]+0.15 < -20){
+		if (this.pos[1]-0.2 > 20 || this.pos[1]+0.2 < -20){
 			this.pos[1] *= -1;
 		}
 	    //console.log(this.vel);

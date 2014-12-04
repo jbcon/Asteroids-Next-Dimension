@@ -47,7 +47,7 @@ window.onload = function init(){
                 ship.moveVec[3] = true;
                 break;
             case 16:     //shift
-                ship.thrustOn = true;
+                break;
         }
     });
 
@@ -82,6 +82,7 @@ function render(){
     ship.thrust();
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     ship.render();
+    console.log(ship.thrustOn);
 
     for (var i = 0; i < asteroidArray.length; i++){
         asteroidArray[i].move();
