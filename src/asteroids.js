@@ -14,9 +14,9 @@ var at;
 var up = vec3(0.0, 0.0 , 1.0);  //into positive z direction
 var aspect
 var cameraDistance;
+var score = 0;
 var lives = 3;
-var respawnTime = 0;
-var invincibility = 0;
+var level = 1;
 
 window.onload = function init(){
     var canvas = document.getElementById( "gl-canvas" );
@@ -35,24 +35,7 @@ window.onload = function init(){
     ship = new Ship();
 
     obstacle = new AsteroidModel();
-    for (var i = 0; i < 4; i++){
-        /*(random-.5)/2 will make sure the asteroid starts 
-            away from the center of the screen
-            so player doesn't instantly die */
-        var x = (Math.random()-.5)/2.0;
-        var y = (Math.random()-.5)/2.0;
-        if (x > 0)
-            x += .5;
-        else
-            x -= .5;
-        if (y > 0)
-            y += .5;
-        else
-            y -= .5;
-        asteroidArray.push(new Asteroid(x, y, 
-            360*Math.random()*2-1,
-            3, 0.005));
-    }
+    spawnAsteroids(1);
 
     //register user input with keyboard
     window.addEventListener("keydown", function() {
@@ -68,7 +51,7 @@ window.onload = function init(){
                 break;
             case 16:     //shift
                 if (!ship.firingBullet && ship.bulletList.length < 6
-                && respawnTime == 0 && lives != 0 ){
+                && ship.respawnTime == 0 && lives != 0 ){
                     ship.bulletList.push(new Bullet(ship.pos[0], ship.pos[1], ship.theta[2]));
                     ship.firingBullet = true;
                 }
@@ -115,18 +98,22 @@ function checkCollisions(){
             var dist = Math.sqrt(Math.pow(a.pos[0]-b.pos[0], 2) + Math.pow(a.pos[1]-b.pos[1], 2));
             if ( dist < a.radius+4.0/512.0){
                 splitAsteroid(a);
+                if (a.s > 1)
+                    score += 50;
+                else
+                    score += 100;
                 ship.bulletList.splice(j);
                 
             }
         }
         var distShip = Math.sqrt(Math.pow(a.pos[0]-ship.pos[0]/20.0, 2) + Math.pow(a.pos[1]-ship.pos[1]/20.0, 2));
 
-        if (distShip < a.radius && invincibility == 0){
-            respawnTime = 200;
+        if (distShip < a.radius && ship.invincibility == 0){
+            ship.respawnTime = 200;
             splitAsteroid(a);
             ship.vel = vec2(0,0);
             lives--;
-            invincibility = 250;
+            ship.invincibility = 200;
         }
     }
     for (var i = 0; i < toDestroy.length; i++){
@@ -141,8 +128,8 @@ function splitAsteroid(a){
     //if the asteroid is not the smallest size
     if (a.s > 1){
         //make two new ones going different directions and smaller
-        var a1 = new Asteroid(a.pos[0], a.pos[1], 90-a.trueDirection, a.s-1, a.speed);
-        var a2 = new Asteroid(a.pos[0], a.pos[1], 90+a.trueDirection, a.s-1, a.speed);
+        var a1 = new Asteroid(a.pos[0], a.pos[1], 90+a.trueDirection, a.s-1, a.speed*1.5);
+        var a2 = new Asteroid(a.pos[0], a.pos[1], 90-a.trueDirection, a.s-1, a.speed*1.5);
         asteroidArray.push(a1);
         asteroidArray.push(a2);
     }
@@ -150,19 +137,29 @@ function splitAsteroid(a){
 
 
 function update(){
+
+    //if all the asteroids were destroyed
+    if (asteroidArray.length == 0){
+        //start another round
+        level++;
+        //so it doesn't instantly die on a new level
+        ship.invincibility = 200;
+        spawnAsteroids();
+    }
+
     toDestroy = [];
-    if (respawnTime == 0 && lives != 0){
+    if (ship.respawnTime == 0 && lives != 0){
     	ship.rotate();
         ship.move();
         ship.thrust();
     }
     else if (lives != 0){
-        respawnTime--;
-        console.log(respawnTime);
+        ship.respawnTime--;
+        console.log(ship.respawnTime);
     }
-    if (invincibility > 0 && respawnTime == 0 && lives != 0){
+    if (ship.invincibility > 0 && ship.respawnTime == 0 && lives != 0){
         console.log("INVINCIBLE!!");
-        invincibility--;
+        ship.invincibility--;
     }
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     var bulletPositions = [];
@@ -177,22 +174,47 @@ function update(){
     }
     checkCollisions();
 
+    document.getElementById("Score").innerHTML = "Score: " + score;
     if (lives > 0)
         document.getElementById("Lives").innerHTML = "Lives: " + lives;
     else
         document.getElementById("Lives").innerHTML = "GAME OVER!";
+    document.getElementById("Level").innerHTML = "Level " + level;
 
-    if (respawnTime == 0 && lives != 0){
+    if (ship.respawnTime == 0 && lives != 0){
         ship.render();
     }
     drawBullets(bulletPositions);    
 
+    obstacle.bind();
     for (var i = 0; i < asteroidArray.length; i++){
         asteroidArray[i].move();
         obstacle.render(asteroidArray[i]);
     }
+    obstacle.unbind();
     updateCamera();
     window.requestAnimFrame(update);
+}
+
+function spawnAsteroids(){
+    for (var i = 0; i < level; i++){
+        /*(random-.5)/2 will make sure the asteroid starts 
+            away from the center of the screen
+            so player doesn't instantly die */
+        var x = (Math.random()-.5)/2.0;
+        var y = (Math.random()-.5)/2.0;
+        if (x > 0)
+            x += .5;
+        else
+            x -= .5;
+        if (y > 0)
+            y += .5;
+        else
+            y -= .5;
+        asteroidArray.push(new Asteroid(x, y, 
+            360*Math.random()*2-1,
+            3, 0.005+level*0.001));
+    }
 }
 
 function drawBullets(points){

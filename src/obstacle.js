@@ -85,11 +85,11 @@ function AsteroidModel(){
 	    
 	    }*/
 	}
-	this.render = function(asteroid){
-		//to do: use element array
 
-		asteroid.theta = add(asteroid.theta, asteroid.omega);
-
+	/*bind and unbind used so you only need to 
+	load the data into the buffers once for
+	all instances each frame */
+	this.bind = function(){
 		gl.useProgram(this.program);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
 	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
@@ -100,13 +100,20 @@ function AsteroidModel(){
 	    gl.bufferData( gl.ARRAY_BUFFER, flatten(this.points), gl.DYNAMIC_DRAW );
 		gl.vertexAttribPointer( this.vPosition, 3, gl.FLOAT, false, 0, 0 );
 	    gl.enableVertexAttribArray(this.vPosition);
+	}
+
+	this.unbind = function(){
+		gl.disableVertexAttribArray(this.vColor);
+	    gl.disableVertexAttribArray( this.vPosition );
+	}
+
+	this.render = function(asteroid){
+		asteroid.theta = add(asteroid.theta, asteroid.omega);
 
 	    gl.uniform2fv(this.posLoc, asteroid.pos);
 		gl.uniform3fv(this.thetaLoc, asteroid.theta);
 		gl.uniform1f(this.scaleLoc, asteroid.s);
 	    gl.drawArrays( gl.TRIANGLES, 0, this.points.length );
-		gl.disableVertexAttribArray(this.vColor);
-	    gl.disableVertexAttribArray( this.vPosition );
 	}
 
 	this.createModel();

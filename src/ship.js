@@ -24,10 +24,12 @@ function Ship() {
 	//graphics and initialization
 	this.points = toVec3(e_points);
 	this.colors = [];
+	this.flickerColors = []
 
 	this.initGraphics = function(){
 		for (var i = 0; i < this.points.length; i++){
-	        this.colors.push(vec4(0.5, 0.5, 0.5, 1), 1.0);
+	        this.colors.push(vec4(0.5, 0.5, 0.5, 1));
+	        this.flickerColors.push(vec4(0.5, 0.5, 0, 1));
 	    }
 
 		this.program = initShaders( gl, "src/shaders/ship-vertex.glsl", "src/shaders/ship-fragment.glsl" );
@@ -60,6 +62,9 @@ function Ship() {
 	this.moveVec = [false, false, false, false];
 	this.bulletList = [];
 	this.firingBullet;
+	this.respawnTime = 0;
+	this.invincibility = 0;
+	this.flicker = 0;
 
 	this.rotate = function (){
 		if (this.moveVec[2]){
@@ -146,10 +151,25 @@ function Ship() {
 	}
 
 	this.render = function(){
+
+		if (this.invincibility > 0){
+			flicker++;
+			if (flicker > 8)
+				flicker = 0;
+		}
+		else{
+			flicker = 0;
+		}
+
 		gl.useProgram(this.program);
 
 	    gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
+	    if (flicker > 4){
+			gl.bufferData(gl.ARRAY_BUFFER, flatten(this.flickerColors), gl.DYNAMIC_DRAW);
+		}
+		else{
+		    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
+		}
 		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0)
 		gl.enableVertexAttribArray(this.vColor);
 
