@@ -90,12 +90,15 @@ function checkCollisions(){
             var b = ship.bulletList[j];
 
             /* checks if distance to center of asteroid
-            is shorter than the radius of it (collision) */
+            is shorter than the radiii of asteroid and 
+            bullet combined (collision) */
             var dist = Math.sqrt(Math.pow(a.pos[0]-b.pos[0], 2) + Math.pow(a.pos[1]-b.pos[1], 2));
-            if ( dist < a.radius){
+            if ( dist < a.radius+4.0/512.0){
                 toDestroy.push(a);
                 ship.bulletList.splice(j);
+                //if the asteroid is not the smallest size
                 if (a.s > 1){
+                    //make two new ones going different directions and smaller
                     var a1 = new Asteroid(a.pos[0], a.pos[1], 90-a.trueDirection, a.s-1, a.speed);
                     var a2 = new Asteroid(a.pos[0], a.pos[1], 90+a.trueDirection, a.s-1, a.speed);
                     asteroidArray.push(a1);
@@ -105,12 +108,12 @@ function checkCollisions(){
 
         }
     }
-    //handles destroying and creating meteroites, if necessary
-    /*for (var i = 0; i < toDestroy.length; i++){
-        var a = toDestroy[i];
-        
-        asteroidArray.splice(asteroidArray.indexOf(a));
-    }*/
+    for (var i = 0; i < toDestroy.length; i++){
+        console.log(asteroidArray.length);
+        var a = toDestroy[i];   
+        asteroidArray.splice(asteroidArray.indexOf(a),1);
+        console.log(asteroidArray.length);
+    }
 }
 
 
