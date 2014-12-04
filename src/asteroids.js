@@ -31,7 +31,9 @@ window.onload = function init(){
 
     obstacle = new AsteroidModel();
     for (var i = 0; i < 4; i++){
-        asteroidArray.push(new Asteroid(Math.random()*2-1, Math.random()*2-1, 3, 0.005));
+        asteroidArray.push(new Asteroid(Math.random()*2-1, Math.random()*2-1, 
+            360*Math.random()*2-1,
+            3, 0.005));
     }
 
     //register user input with keyboard
@@ -47,6 +49,10 @@ window.onload = function init(){
                 ship.moveVec[3] = true;
                 break;
             case 16:     //shift
+                if (!ship.firingBullet && ship.bulletList.length < 6 ){
+                    ship.bulletList.push(new Bullet(ship.pos[0], ship.pos[1], ship.theta[2]));
+                    ship.firingBullet = true;
+                }
                 break;
         }
     });
@@ -63,6 +69,7 @@ window.onload = function init(){
                 ship.moveVec[3] = false;
                 break;
             case 16:     //shift
+                ship.firingBullet = false;
                 break;
         }
     });
@@ -72,27 +79,80 @@ window.onload = function init(){
     aspect = canvas.width/canvas.height;
     cameraDistance = 1 
 
-    render();
+    update();
 };
 
 function checkCollisions(){
+    var toDestroy = [];
+    for (var i = 0; i < asteroidArray.length; i++){
+        for (var j = 0; j < ship.bulletList.length; j++){
+            var a = asteroidArray[i];
+            var b = ship.bulletList[j];
 
+            /* checks if distance to center of asteroid
+            is shorter than the radius of it (collision) */
+            var dist = Math.sqrt(Math.pow(a.pos[0]-b.pos[0], 2) + Math.pow(a.pos[1]-b.pos[1], 2));
+            if ( dist < a.radius){
+                toDestroy.push(a);
+                ship.bulletList.splice(j);
+                if (a.s > 1){
+                    var a1 = new Asteroid(a.pos[0], a.pos[1], 90-a.trueDirection, a.s-1, a.speed);
+                    var a2 = new Asteroid(a.pos[0], a.pos[1], 90+a.trueDirection, a.s-1, a.speed);
+                    asteroidArray.push(a1);
+                    asteroidArray.push(a2);
+                }
+            }
+
+        }
+    }
+    //handles destroying and creating meteroites, if necessary
+    /*for (var i = 0; i < toDestroy.length; i++){
+        var a = toDestroy[i];
+        
+        asteroidArray.splice(asteroidArray.indexOf(a));
+    }*/
 }
 
 
-function render(){
+function update(){
 	ship.rotate();
     ship.move();
     ship.thrust();
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+    var bulletPositions = [];
+    for (var i = 0; i < ship.bulletList.length; i++){
+        ship.bulletList[i].move();
+        if (ship.bulletList[i].life > 30){
+            ship.bulletList.splice(i, 1);
+        }
+        else{
+            bulletPositions.push(ship.bulletList[i].pos);
+        }
+    }
     ship.render();
+    checkCollisions();
+    drawBullets(bulletPositions);    
+
+    
 
     for (var i = 0; i < asteroidArray.length; i++){
         asteroidArray[i].move();
         obstacle.render(asteroidArray[i]);
     }
     updateCamera();
-    window.requestAnimFrame(render);
+    window.requestAnimFrame(update);
+}
+
+function drawBullets(points){
+    gl.useProgram(ship.bulletProgram);
+    gl.bindBuffer( gl.ARRAY_BUFFER, ship.bBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.DYNAMIC_DRAW );
+    gl.vertexAttribPointer( ship.bPosition, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray(this.bPosition);
+
+    gl.drawArrays(gl.POINTS, 0, points.length);
+
+    gl.disableVertexAttribArray(this.bPosition);
 }
 
 function updateCamera(){

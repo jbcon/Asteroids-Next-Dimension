@@ -2,7 +2,7 @@
 // an asteroid instance
 // x and y can be used as parameters for breaking apart asteroids
 // theta and omega are random
-var Asteroid = function(xpos, ypos, size, speed){
+function Asteroid(xpos, ypos, angle, size, speed){
 	this.s = size;
 	this.startSize = size;
 	this.pos = vec2(xpos, ypos);
@@ -10,13 +10,14 @@ var Asteroid = function(xpos, ypos, size, speed){
 	this.omega = vec3(Math.random()*2-1, Math.random()*2-1, Math.random()*2-1);
 
 	//direction for velocity calculation
-	this.trueDirection = vec2(Math.random()*2-1, Math.random()*2-1);
+	//between 0 and 1
+	this.trueDirection = angle;
 	this.speed = speed;
 	this.radius = this.s/20.0;
 
 	this.move = function(){
-		this.pos[0] += speed * Math.cos(2 * Math.PI * this.trueDirection[0]);
-		this.pos[1] += speed * Math.sin(2 * Math.PI * this.trueDirection[0]);
+		this.pos[0] += speed * Math.cos(radians(this.trueDirection));
+		this.pos[1] += speed * Math.sin(radians(this.trueDirection));
 		if (this.pos[0]-this.radius > 1 || this.pos[0]+this.radius < -1){
 			this.pos[0] *= -1;
 		}
@@ -27,7 +28,7 @@ var Asteroid = function(xpos, ypos, size, speed){
 }
 
 //singleton asteroid model that asteroid instances can reference
-var AsteroidModel = function(){
+function AsteroidModel(){
 	this.points = [];
 	this.program = initShaders( gl, "src/shaders/asteroid-vertex.glsl", "src/shaders/asteroid-fragment.glsl" );
     this.colors = [];
@@ -85,9 +86,7 @@ var AsteroidModel = function(){
 	this.render = function(asteroid){
 		//to do: use element array
 
-		asteroid.theta[0] += asteroid.omega[0];
-		asteroid.theta[1] += asteroid.omega[1];
-		asteroid.theta[2] += asteroid.omega[2];
+		asteroid.theta = add(asteroid.theta, asteroid.omega);
 
 		gl.useProgram(this.program);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);

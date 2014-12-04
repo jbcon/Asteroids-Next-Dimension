@@ -1,3 +1,23 @@
+function Bullet(xpos, ypos, theta){
+	this.pos = vec2(xpos/20.0+.15*-Math.cos(radians(90+theta)), ypos/20.0+.15*-Math.sin(radians(90+theta)));
+	this.bulletSpeed = .05;
+	this.vel = vec2(this.bulletSpeed * -Math.cos(radians(90+theta)),this.bulletSpeed * -Math.sin(radians(90+theta)));
+	//delete bullet after time has passed
+	this.life = 0;
+
+	this.move = function(){
+	    this.pos = add(this.pos,this.vel);
+	    if (this.pos[0] > 1 || this.pos[0] < -1){
+			this.pos[0] *= -1;
+		}
+		if (this.pos[1] > 1 || this.pos[1] < -1){
+			this.pos[1] *= -1;
+		}
+		this.life++;
+	}
+
+}
+
 function Ship() {
 	//graphics and initialization
 	this.points = toVec3(e_points);
@@ -11,12 +31,14 @@ function Ship() {
 		this.program = initShaders( gl, "src/shaders/ship-vertex.glsl", "src/shaders/ship-fragment.glsl" );
 
 	    this.cBuffer = gl.createBuffer();
-
 	    this.vColor = gl.getAttribLocation(this.program, "vColor");
 
-		this.vBuffer = gl.createBuffer();
-	    
+		this.vBuffer = gl.createBuffer(); 
 	    this.vPosition = gl.getAttribLocation( this.program, "vPosition" );
+
+	    this.bulletProgram = initShaders(gl, "src/shaders/bullet-vertex.glsl", "src/shaders/bullet-fragment.glsl")
+		this.bBuffer = gl.createBuffer();
+		this.bPosition = gl.getAttribLocation(this.bulletProgram, "vPosition");
 	}
 
 	this.initGraphics();
@@ -29,11 +51,13 @@ function Ship() {
 	this.posLoc = gl.getUniformLocation(this.program, "pos");
 	this.thrustOn = false;
 	this.thrustForce = .01;
-	this.rotateSpeed = 3;
+	this.rotateSpeed = 5;
 	this.vel = vec2(0,0);
 	this.velMax = vec2(.25,.25);
 	this.deceleration = .005;
 	this.moveVec = [false, false, false, false];
+	this.bulletList = [];
+	this.firingBullet
 
 	this.rotate = function (){
 		if (this.moveVec[2]){
@@ -58,8 +82,7 @@ function Ship() {
 	}
 
 	this.move = function(){
-	    this.pos[0] -= this.vel[0];
-	    this.pos[1] -= this.vel[1];
+	    this.pos = subtract(this.pos,this.vel);
 
 	    if (this.vel[0] > 0){
 	        this.vel[0] -= this.deceleration * this.vel[0];
