@@ -37,6 +37,15 @@ function AsteroidModel(){
     //holds mappings for perturbing shared points
     this.pointMapping = {}
 
+    this.normals = [];
+    this.materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+    this.materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+    this.materialSpecular = vec4( 0.3, 0.3, 0.3, 1.0 );
+    this.materialShininess = 20.0;
+    this.ambientProduct = mult(lightAmbient, this.materialAmbient);
+    this.diffuseProduct = mult(lightDiffuse, this.materialDiffuse);
+    this.specularProduct = mult(lightSpecular, this.materialSpecular);
+
 	//creates a sphere with slightly perturbed surface
 	this.createModel =	function(){
 		var a = vec3(0.0, 0.0, -1.0);
@@ -54,17 +63,26 @@ function AsteroidModel(){
 	        var ab = mix( a, b, 0.5 );
 	        var ac = mix( a, c, 0.5 );
 	        var bc = mix( b, c, 0.5 );
-	                
+
 	        ab = normalize(ab, false);
 	        ac = normalize(ac, false);
 	        bc = normalize(bc, false);
-	                                
+
 	        this.divideTriangle( a, ab, ac, count - 1 );
 	        this.divideTriangle( ab, b, bc, count - 1 );
 	        this.divideTriangle( bc, c, ac, count - 1 );
 	        this.divideTriangle( ab, bc, ac, count - 1 );
 	    }
-	    else { 
+	    else {
+            var t1 = subtract(b, a);
+            var t2 = subtract(c, a);
+            var normal = normalize(cross(t2, t1));
+            normal = vec4(normal);
+            normal[3]  = 0.0;
+
+            this.normals.push(normal);
+            this.normals.push(normal);
+            this.normals.push(normal);
 	        this.points.push(a);
 	        this.points.push(b);
 	        this.points.push(c);
@@ -82,7 +100,7 @@ function AsteroidModel(){
 	    for (var i = 0; i < this.verts.length; i++){
    	   		console.log(this.verts[i], this.pointMapping[this.verts[i].toString()]);
     		this.points.push(add(this.pointMapping[this.verts[i].toString()], this.verts[i]));
-	    
+
 	    }*/
 	}
 	this.render = function(asteroid){
@@ -91,6 +109,23 @@ function AsteroidModel(){
 		asteroid.theta = add(asteroid.theta, asteroid.omega);
 
 		gl.useProgram(this.program);
+
+		gl.uniform4fv( gl.getUniformLocation(this.program,
+            "ambientProduct"),flatten(this.ambientProduct) );
+        gl.uniform4fv( gl.getUniformLocation(this.program,
+            "diffuseProduct"),flatten(this.diffuseProduct) );
+        gl.uniform4fv( gl.getUniformLocation(this.program,
+            "specularProduct"),flatten(this.specularProduct) );
+        gl.uniform4fv( gl.getUniformLocation(this.program,
+            "lightPosition"),flatten((subtract(vec4(0,0,0,0),lightPosition))));
+        gl.uniform1f( gl.getUniformLocation(this.program,
+            "shininess"),this.materialShininess );
+
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.nBuffer);
+        gl.bufferData( gl.ARRAY_BUFFER, flatten(this.normals), gl.DYNAMIC_DRAW );
+        gl.vertexAttribPointer( this.vNormal, 4, gl.FLOAT, false, 0, 0 );
+        gl.enableVertexAttribArray( this.vNormal);
+
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
 	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
 		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0)
@@ -110,6 +145,8 @@ function AsteroidModel(){
 	}
 
 	this.createModel();
+	this.nBuffer = gl.createBuffer();
+    this.vNormal = gl.getAttribLocation( this.program, "vNormal" );
 	this.cBuffer = gl.createBuffer();
     this.vColor = gl.getAttribLocation(this.program, "vColor");
 	this.vBuffer = gl.createBuffer();

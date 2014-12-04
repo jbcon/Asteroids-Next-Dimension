@@ -1,8 +1,13 @@
 attribute vec4 vPosition;
 attribute vec4 vColor;
+attribute vec4 vNormal;
 varying vec4 fColor;
 uniform vec3 theta;
 uniform vec2 pos;
+varying vec3 N, L, E;
+uniform mat4 mvMatrix;
+uniform mat4 pMatrix;
+uniform vec4 lightPosition;
 
 void main()
 {
@@ -33,7 +38,7 @@ void main()
 					0.0, 1.0, 0.0, 0.0,
 					0.0, 0.0, 1.0, 0.0,
 					pos.x, pos.y, 0.0, 1.0 );
-	
+
 	mat4 toOrigin =  mat4( 1.0, 0.0 ,0.0, 0.0,
 							0.0, 1.0, 0.0, 0.0,
 							0.0, 0.0, 1.0, 0.0,
@@ -43,6 +48,14 @@ void main()
 						0.0, scaleFactor, 0.0, 0.0,
 						0.0, 0.0, scaleFactor, 0.0,
 						0.0, 0.0, 0.0, 1.0 );
+
+    vec3 light;
+    vec3 pos = (mvMatrix * vPosition).xyz;
+    if(lightPosition.z == 0.0)  L = normalize(lightPosition.xyz);
+    else  L = normalize(lightPosition).xyz - pos;
+
+    E =  -normalize(pos);
+    N = normalize( (rz*vNormal).xyz);
 
     gl_Position = scale * tx * rz * vPosition;
 
