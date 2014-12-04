@@ -68,7 +68,7 @@ window.onload = function init(){
                 break;
             case 16:     //shift
                 if (!ship.firingBullet && ship.bulletList.length < 6
-                && respawnTime == 0 ){
+                && respawnTime == 0 && lives != 0 ){
                     ship.bulletList.push(new Bullet(ship.pos[0], ship.pos[1], ship.theta[2]));
                     ship.firingBullet = true;
                 }
@@ -120,13 +120,13 @@ function checkCollisions(){
             }
         }
         var distShip = Math.sqrt(Math.pow(a.pos[0]-ship.pos[0]/20.0, 2) + Math.pow(a.pos[1]-ship.pos[1]/20.0, 2));
-        console.log("distShip: " + distShip);
 
-        if (distShip < a.radius && respawnTime == 0){
+        if (distShip < a.radius && invincibility == 0){
             respawnTime = 200;
             splitAsteroid(a);
             ship.vel = vec2(0,0);
             lives--;
+            invincibility = 250;
         }
     }
     for (var i = 0; i < toDestroy.length; i++){
@@ -151,14 +151,18 @@ function splitAsteroid(a){
 
 function update(){
     toDestroy = [];
-    if (respawnTime == 0){
+    if (respawnTime == 0 && lives != 0){
     	ship.rotate();
         ship.move();
         ship.thrust();
     }
-    else{
+    else if (lives != 0){
         respawnTime--;
         console.log(respawnTime);
+    }
+    if (invincibility > 0 && respawnTime == 0 && lives != 0){
+        console.log("INVINCIBLE!!");
+        invincibility--;
     }
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     var bulletPositions = [];
@@ -173,10 +177,12 @@ function update(){
     }
     checkCollisions();
 
+    if (lives > 0)
+        document.getElementById("Lives").innerHTML = "Lives: " + lives;
+    else
+        document.getElementById("Lives").innerHTML = "GAME OVER!";
 
-    document.getElementById("Lives").innerHTML = "Lives: " + lives;
-
-    if (respawnTime == 0){
+    if (respawnTime == 0 && lives != 0){
         ship.render();
     }
     drawBullets(bulletPositions);    
