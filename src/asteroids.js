@@ -75,6 +75,10 @@ window.onload = function init(){
     render();
 };
 
+function checkCollisions(){
+
+}
+
 
 function render(){
 	ship.rotate();
@@ -82,7 +86,6 @@ function render(){
     ship.thrust();
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     ship.render();
-    console.log(ship.thrustOn);
 
     for (var i = 0; i < asteroidArray.length; i++){
         asteroidArray[i].move();
