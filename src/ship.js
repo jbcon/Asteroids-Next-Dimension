@@ -2,11 +2,13 @@ function Bullet(xpos, ypos, theta){
 	this.pos = vec2(xpos/20.0+.15*-Math.cos(radians(90+theta)), ypos/20.0+.15*-Math.sin(radians(90+theta)));
 	this.bulletSpeed = .05;
 	this.vel = vec2(this.bulletSpeed * -Math.cos(radians(90+theta)),this.bulletSpeed * -Math.sin(radians(90+theta)));
-	//delete bullet after time has passed
+	//to delete bullet after time has passed
 	this.life = 0;
 
 	this.move = function(){
 	    this.pos = add(this.pos,this.vel);
+
+	    //wrap around screen edges
 	    if (this.pos[0] > 1 || this.pos[0] < -1){
 			this.pos[0] *= -1;
 		}
@@ -57,7 +59,7 @@ function Ship() {
 	this.deceleration = .005;
 	this.moveVec = [false, false, false, false];
 	this.bulletList = [];
-	this.firingBullet
+	this.firingBullet;
 
 	this.rotate = function (){
 		if (this.moveVec[2]){
@@ -108,13 +110,14 @@ function Ship() {
 	            this.vel[1] = 0;
 	        }
 	    }
+
+	    //wrap around screen edges
 	    if (this.pos[0]-3 > 20 || this.pos[0]+3 < -20){
 			this.pos[0] *= -1;
 		}
 		if (this.pos[1]-3 > 20 || this.pos[1]+3 < -20){
 			this.pos[1] *= -1;
 		}
-	    //console.log(this.vel);
 	}
 
 	this.thrust = function(){

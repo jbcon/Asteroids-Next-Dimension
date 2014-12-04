@@ -18,6 +18,8 @@ function Asteroid(xpos, ypos, angle, size, speed){
 	this.move = function(){
 		this.pos[0] += speed * Math.cos(radians(this.trueDirection));
 		this.pos[1] += speed * Math.sin(radians(this.trueDirection));
+
+		//wraps around edges of screen
 		if (this.pos[0]-this.radius > 1 || this.pos[0]+this.radius < -1){
 			this.pos[0] *= -1;
 		}
