@@ -24,7 +24,18 @@ function Ship() {
 	//graphics and initialization
 	this.points = toVec3(e_points);
 	this.colors = [];
+<<<<<<< HEAD
 	this.flickerColors = []
+=======
+	this.normals = [];
+    this.materialAmbient = vec4( 0.5, 0.5, 0.5, 1.0 );
+    this.materialDiffuse = vec4( 0.5, 0.5, 0.5, 1.0 );
+    this.materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+    this.materialShininess = 1000.0;
+    this.ambientProduct = mult(lightAmbient, this.materialAmbient);
+    this.diffuseProduct = mult(lightDiffuse, this.materialDiffuse);
+    this.specularProduct = mult(lightSpecular, this.materialSpecular);
+>>>>>>> afa0c587cb969d82724c365f434534fad52a78a6
 
 	this.initGraphics = function(){
 		for (var i = 0; i < this.points.length; i++){
@@ -32,12 +43,27 @@ function Ship() {
 	        this.flickerColors.push(vec4(0.5, 0.5, 0, 1));
 	    }
 
+	    for (var i = 0; i < this.points.length; i+=3){
+            var t1 = subtract(this.points[i+1], this.points[i]);
+            var t2 = subtract(this.points[i+2], this.points[i]);
+            var normal = normalize(cross(t2, t1));
+            normal = vec4(normal);
+            normal[3]  = 0.0;
+
+            this.normals.push(normal);
+            this.normals.push(normal);
+            this.normals.push(normal);
+	    }
+
 		this.program = initShaders( gl, "src/shaders/ship-vertex.glsl", "src/shaders/ship-fragment.glsl" );
+
+        this.nBuffer = gl.createBuffer();
+        this.vNormal = gl.getAttribLocation( this.program, "vNormal" );
 
 	    this.cBuffer = gl.createBuffer();
 	    this.vColor = gl.getAttribLocation(this.program, "vColor");
 
-		this.vBuffer = gl.createBuffer(); 
+		this.vBuffer = gl.createBuffer();
 	    this.vPosition = gl.getAttribLocation( this.program, "vPosition" );
 
 	    this.bulletProgram = initShaders(gl, "src/shaders/bullet-vertex.glsl", "src/shaders/bullet-fragment.glsl")
@@ -127,8 +153,8 @@ function Ship() {
 
 	this.thrust = function(){
 	    if (this.thrustOn){
-	        /* phase shift by -90 degrees since the ship 
-	        starts facing in -y direction 
+	        /* phase shift by -90 degrees since the ship
+	        starts facing in -y direction
 	        I could use sin and -cos but that looks counterintuitive */
 	        this.vel[0] += this.thrustForce * Math.cos(radians(90 + this.theta[2]));
 	        this.vel[1] += this.thrustForce * Math.sin(radians(90 + this.theta[2]));
@@ -163,7 +189,24 @@ function Ship() {
 
 		gl.useProgram(this.program);
 
+		gl.uniform4fv( gl.getUniformLocation(this.program,
+            "ambientProduct"),flatten(this.ambientProduct) );
+        gl.uniform4fv( gl.getUniformLocation(this.program,
+            "diffuseProduct"),flatten(this.diffuseProduct) );
+        gl.uniform4fv( gl.getUniformLocation(this.program,
+            "specularProduct"),flatten(this.specularProduct) );
+        gl.uniform4fv( gl.getUniformLocation(this.program,
+            "lightPosition"),flatten(lightPosition) );
+        gl.uniform1f( gl.getUniformLocation(this.program,
+            "shininess"),this.materialShininess );
+
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.nBuffer);
+        gl.bufferData( gl.ARRAY_BUFFER, flatten(this.normals), gl.DYNAMIC_DRAW );
+        gl.vertexAttribPointer( this.vNormal, 4, gl.FLOAT, false, 0, 0 );
+        gl.enableVertexAttribArray( this.vNormal);
+
 	    gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
+<<<<<<< HEAD
 	    if (flicker > 4){
 			gl.bufferData(gl.ARRAY_BUFFER, flatten(this.flickerColors), gl.DYNAMIC_DRAW);
 		}
@@ -171,6 +214,10 @@ function Ship() {
 		    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
 		}
 		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0)
+=======
+	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
+		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0);
+>>>>>>> afa0c587cb969d82724c365f434534fad52a78a6
 		gl.enableVertexAttribArray(this.vColor);
 
 		gl.bindBuffer( gl.ARRAY_BUFFER, this.vBuffer );

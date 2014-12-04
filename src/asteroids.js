@@ -7,8 +7,8 @@ var asteroidArray = [];
 var toDestroy = [];
 
 
-var modelView, projection;
-var mvMatrix, pMatrix;
+var modelView, projection, normal;
+var mvMatrix, pMatrix, nMatrix;
 var eye;
 var at;
 var up = vec3(0.0, 0.0 , 1.0);  //into positive z direction
@@ -17,6 +17,11 @@ var cameraDistance;
 var score = 0;
 var lives = 3;
 var level = 1;
+
+var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 
 window.onload = function init(){
     var canvas = document.getElementById( "gl-canvas" );
@@ -30,7 +35,7 @@ window.onload = function init(){
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
     gl.enable(gl.DEPTH_TEST);
-    
+
     //initializes ship-related graphics and physics variables
     ship = new Ship();
 
@@ -80,7 +85,7 @@ window.onload = function init(){
     modelView = gl.getUniformLocation(ship.program,"modelView");
     projection = gl.getUniformLocation(ship.program, "projection");
     aspect = canvas.width/canvas.height;
-    cameraDistance = 1 
+    cameraDistance = 1
 
     update();
 };
@@ -93,7 +98,7 @@ function checkCollisions(){
             var b = ship.bulletList[j];
 
             /* checks if distance to center of asteroid
-            is shorter than the radiii of asteroid and 
+            is shorter than the radiii of asteroid and
             bullet combined (collision) */
             var dist = Math.sqrt(Math.pow(a.pos[0]-b.pos[0], 2) + Math.pow(a.pos[1]-b.pos[1], 2));
             if ( dist < a.radius+4.0/512.0){
@@ -103,7 +108,7 @@ function checkCollisions(){
                 else
                     score += 100;
                 ship.bulletList.splice(j);
-                
+
             }
         }
         var distShip = Math.sqrt(Math.pow(a.pos[0]-ship.pos[0]/20.0, 2) + Math.pow(a.pos[1]-ship.pos[1]/20.0, 2));
@@ -117,7 +122,7 @@ function checkCollisions(){
         }
     }
     for (var i = 0; i < toDestroy.length; i++){
-        var a = toDestroy[i];   
+        var a = toDestroy[i];
         asteroidArray.splice(asteroidArray.indexOf(a),1);
     }
 }
@@ -184,7 +189,7 @@ function update(){
     if (ship.respawnTime == 0 && lives != 0){
         ship.render();
     }
-    drawBullets(bulletPositions);    
+    drawBullets(bulletPositions);
 
     obstacle.bind();
     for (var i = 0; i < asteroidArray.length; i++){
@@ -235,8 +240,14 @@ function updateCamera(){
     eye = vec3(eyex*cameraDistance+ship.pos[0], eyey*cameraDistance+ship.pos[1], 0.0);
     mvMatrix = lookAt(eye, vec3(ship.pos[0], ship.pos[1], 0.0), up);
     pMatrix = perspective(10, aspect, 0, 1 );
+    nMatrix = [
+        vec3(mvMatrix[0][0], mvMatrix[0][1], mvMatrix[0][2]),
+        vec3(mvMatrix[1][0], mvMatrix[1][1], mvMatrix[1][2]),
+        vec3(mvMatrix[2][0], mvMatrix[2][1], mvMatrix[2][2])
+    ];
     gl.uniformMatrix4fv(modelView, false, flatten(mvMatrix));
     gl.uniformMatrix4fv(projection, false, flatten(pMatrix));
+    gl.uniformMatrix3fv(normal, false, flatten(nMatrix) );
 }
 
 function toVec3(vertices){
