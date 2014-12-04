@@ -23,25 +23,22 @@ function Bullet(xpos, ypos, theta){
 function Ship() {
 	//graphics and initialization
 	this.points = toVec3(e_points);
-	this.colors = [];
-<<<<<<< HEAD
-	this.flickerColors = []
-=======
 	this.normals = [];
     this.materialAmbient = vec4( 0.5, 0.5, 0.5, 1.0 );
     this.materialDiffuse = vec4( 0.5, 0.5, 0.5, 1.0 );
+    this.flickerDiffuse = vec4(0.5, 0.5, 0.0, 1.0);
     this.materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
     this.materialShininess = 1000.0;
     this.ambientProduct = mult(lightAmbient, this.materialAmbient);
     this.diffuseProduct = mult(lightDiffuse, this.materialDiffuse);
+    this.flickerDiffuseProduct = mult(lightDiffuse, this.flickerDiffuse);
     this.specularProduct = mult(lightSpecular, this.materialSpecular);
->>>>>>> afa0c587cb969d82724c365f434534fad52a78a6
 
 	this.initGraphics = function(){
-		for (var i = 0; i < this.points.length; i++){
+		/*for (var i = 0; i < this.points.length; i++){
 	        this.colors.push(vec4(0.5, 0.5, 0.5, 1));
 	        this.flickerColors.push(vec4(0.5, 0.5, 0, 1));
-	    }
+	    }*/
 
 	    for (var i = 0; i < this.points.length; i+=3){
             var t1 = subtract(this.points[i+1], this.points[i]);
@@ -59,9 +56,6 @@ function Ship() {
 
         this.nBuffer = gl.createBuffer();
         this.vNormal = gl.getAttribLocation( this.program, "vNormal" );
-
-	    this.cBuffer = gl.createBuffer();
-	    this.vColor = gl.getAttribLocation(this.program, "vColor");
 
 		this.vBuffer = gl.createBuffer();
 	    this.vPosition = gl.getAttribLocation( this.program, "vPosition" );
@@ -191,8 +185,15 @@ function Ship() {
 
 		gl.uniform4fv( gl.getUniformLocation(this.program,
             "ambientProduct"),flatten(this.ambientProduct) );
-        gl.uniform4fv( gl.getUniformLocation(this.program,
-            "diffuseProduct"),flatten(this.diffuseProduct) );
+		if (flicker > 4){
+			gl.uniform4fv( gl.getUniformLocation(this.program,
+            	"diffuseProduct"),flatten(this.flickerDiffuseProduct) );
+		}
+		else{
+			gl.uniform4fv( gl.getUniformLocation(this.program,
+            	"diffuseProduct"),flatten(this.diffuseProduct) );
+		}
+        
         gl.uniform4fv( gl.getUniformLocation(this.program,
             "specularProduct"),flatten(this.specularProduct) );
         gl.uniform4fv( gl.getUniformLocation(this.program,
@@ -204,21 +205,6 @@ function Ship() {
         gl.bufferData( gl.ARRAY_BUFFER, flatten(this.normals), gl.DYNAMIC_DRAW );
         gl.vertexAttribPointer( this.vNormal, 4, gl.FLOAT, false, 0, 0 );
         gl.enableVertexAttribArray( this.vNormal);
-
-	    gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-<<<<<<< HEAD
-	    if (flicker > 4){
-			gl.bufferData(gl.ARRAY_BUFFER, flatten(this.flickerColors), gl.DYNAMIC_DRAW);
-		}
-		else{
-		    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
-		}
-		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0)
-=======
-	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
-		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0);
->>>>>>> afa0c587cb969d82724c365f434534fad52a78a6
-		gl.enableVertexAttribArray(this.vColor);
 
 		gl.bindBuffer( gl.ARRAY_BUFFER, this.vBuffer );
 	    gl.bufferData( gl.ARRAY_BUFFER, flatten(this.points), gl.DYNAMIC_DRAW );
