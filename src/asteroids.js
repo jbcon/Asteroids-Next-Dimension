@@ -7,8 +7,8 @@ var asteroidArray = [];
 var toDestroy = [];
 
 
-var modelView, projection, normal;
-var mvMatrix, pMatrix, nMatrix;
+var normal;
+var nMatrix;
 var eye;
 var at;
 var up = vec3(0.0, 0.0 , 1.0);  //into positive z direction
@@ -201,7 +201,6 @@ function update(){
         obstacle.render(asteroidArray[i]);
     }
     obstacle.unbind();
-    updateCamera();
     window.requestAnimFrame(update);
 }
 
@@ -236,22 +235,6 @@ function drawBullets(points){
     gl.drawArrays(gl.POINTS, 0, points.length);
 
     gl.disableVertexAttribArray(this.bPosition);
-}
-
-function updateCamera(){
-    eyex = Math.cos(radians(90-ship.theta[2]));
-    eyey = Math.sin(radians(90-ship.theta[2]));
-    eye = vec3(eyex*cameraDistance+ship.pos[0], eyey*cameraDistance+ship.pos[1], 0.0);
-    mvMatrix = lookAt(eye, vec3(ship.pos[0], ship.pos[1], 0.0), up);
-    pMatrix = perspective(10, aspect, 0, 1 );
-    nMatrix = [
-        vec3(mvMatrix[0][0], mvMatrix[0][1], mvMatrix[0][2]),
-        vec3(mvMatrix[1][0], mvMatrix[1][1], mvMatrix[1][2]),
-        vec3(mvMatrix[2][0], mvMatrix[2][1], mvMatrix[2][2])
-    ];
-    gl.uniformMatrix4fv(modelView, false, flatten(mvMatrix));
-    gl.uniformMatrix4fv(projection, false, flatten(pMatrix));
-    gl.uniformMatrix3fv(normal, false, flatten(nMatrix) );
 }
 
 function toVec3(vertices){
