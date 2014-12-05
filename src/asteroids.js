@@ -177,6 +177,11 @@ function update(){
             bulletPositions.push(ship.bulletList[i].pos);
         }
     }
+
+    for (var i = 0; i < asteroidArray.length; i++){
+        asteroidArray[i].move();
+    }
+
     checkCollisions();
 
     document.getElementById("Score").innerHTML = "Score: " + score;
@@ -193,7 +198,6 @@ function update(){
 
     obstacle.bind();
     for (var i = 0; i < asteroidArray.length; i++){
-        asteroidArray[i].move();
         obstacle.render(asteroidArray[i]);
     }
     obstacle.unbind();
