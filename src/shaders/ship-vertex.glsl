@@ -58,7 +58,7 @@ void main()
     else  L = normalize(lightPosition).xyz - pos;
 
     E =  -normalize(pos);
-    N = normalize( (rz*vNormal).xyz);
+    N = normalize( (vNormal).xyz);
 
     gl_Position = scale * tx * rz * ry * vPosition;
 
