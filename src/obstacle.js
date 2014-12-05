@@ -38,9 +38,9 @@ function AsteroidModel(){
     this.pointMapping = {}
 
     this.normals = [];
-    this.materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
-    this.materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
-    this.materialSpecular = vec4( 0.1, 0.1, 0.1, 1.0 );
+    this.materialAmbient = vec4( 1.0, 0.3, 0.0, 1.0 );
+    this.materialDiffuse = vec4( 1.0, 0.3, 0.0, 1.0 );
+    this.materialSpecular = vec4( 0.3, 0.3, 0.3, 1.0 );
     this.materialShininess = 1.0;
     this.ambientProduct = mult(lightAmbient, this.materialAmbient);
     this.diffuseProduct = mult(lightDiffuse, this.materialDiffuse);

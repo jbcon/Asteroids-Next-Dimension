@@ -6,8 +6,6 @@ uniform vec3 theta;
 uniform vec2 pos;
 uniform float scale;
 varying vec3 N, L, E;
-uniform mat4 mvMatrix;
-uniform mat4 pMatrix;
 uniform vec4 lightPosition;
 
 void main()
@@ -51,7 +49,7 @@ void main()
 						0.0, 0.0, 0.0, 1.0 );
 
     vec3 light;
-    vec3 pos = (mvMatrix * vPosition).xyz;
+    vec3 pos = (vPosition).xyz;
     if(lightPosition.z == 0.0)  L = normalize(lightPosition.xyz);
     else  L = normalize(lightPosition).xyz - pos;
 
