@@ -48,15 +48,22 @@ void main()
 						0.0, 0.0, scaleFactor, 0.0,
 						0.0, 0.0, 0.0, 1.0 );
 
+	mat4 tMat = t * rx * ry * sM;
+
     vec3 light;
     vec3 pos = (vPosition).xyz;
     if(lightPosition.z == 0.0)  L = normalize(lightPosition.xyz);
-    else  L = normalize(lightPosition).xyz - pos;
+    else  L = pos - normalize(lightPosition).xyz;
 
     E =  -normalize(pos);
-    N = normalize( (rx*ry*vNormal).xyz);
+    N = normalize( (vNormal).xyz);
 
-    gl_Position = t * rx * ry * sM * vPosition;
+    mat3 normalMatrix = mat3(tMat[0][0], tMat[0][1], tMat[0][2],
+    						tMat[1][0], tMat[1][1], tMat[1][2],
+    						tMat[2][0], tMat[2][1], tMat[2][2]);
+   	//normalMatrix = inverse(normalMatrix);
+
+    gl_Position = tMat * vPosition;
 
     fColor = vColor;
 

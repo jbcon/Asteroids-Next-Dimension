@@ -117,7 +117,7 @@ function AsteroidModel(){
         gl.uniform4fv( gl.getUniformLocation(this.program,
             "specularProduct"),flatten(this.specularProduct) );
         gl.uniform4fv( gl.getUniformLocation(this.program,
-            "lightPosition"),flatten((subtract(vec4(0,0,0,0),lightPosition))));
+            "lightPosition"),flatten(lightPosition));
         gl.uniform1f( gl.getUniformLocation(this.program,
             "shininess"),this.materialShininess );
 
@@ -126,11 +126,6 @@ function AsteroidModel(){
         gl.vertexAttribPointer( this.vNormal, 4, gl.FLOAT, false, 0, 0 );
         gl.enableVertexAttribArray( this.vNormal);
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-	    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.DYNAMIC_DRAW);
-		gl.vertexAttribPointer(this.vColor, 4, gl.FLOAT, false, 0, 0)
-		gl.enableVertexAttribArray(this.vColor);
-
 		gl.bindBuffer( gl.ARRAY_BUFFER, this.vBuffer );
 	    gl.bufferData( gl.ARRAY_BUFFER, flatten(this.points), gl.DYNAMIC_DRAW );
 		gl.vertexAttribPointer( this.vPosition, 3, gl.FLOAT, false, 0, 0 );
@@ -138,7 +133,6 @@ function AsteroidModel(){
 	}
 
 	this.unbind = function(){
-		gl.disableVertexAttribArray(this.vColor);
 	    gl.disableVertexAttribArray( this.vPosition );
 	}
 
