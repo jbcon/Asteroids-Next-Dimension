@@ -246,6 +246,23 @@ function toVec3(vertices){
     return points;
 }
 
-function radians(num){
-    return num * Math.PI / 180.0;
+function transformObject(pos, theta, scaleFactor){
+
+    var angles = radians(theta);
+    var c = [Math.cos(angles[0]), Math.cos(angles[1]), Math.cos(angles[2])];
+    var s = [Math.sin(angles[0]), Math.sin(angles[1]), Math.sin(angles[2])];
+    
+    //it's column-major, don't forget!!
+    var rx = rotate(theta[0], vec3(1.0, 0.0, 0.0));
+    var ry = rotate(theta[1], vec3(0.0, 1.0, 0.0));
+    var rz = rotate(theta[2], vec3(0.0, 0.0, 1.0));
+    var t = translate(pos[0], pos[1], 0.0);
+    var s = mat4(scaleFactor, 0.0, 0.0, 0.0,
+                    0.0, scaleFactor, 0.0, 0.0,
+                    0.0, 0.0, scaleFactor, 0.0,
+                    0.0, 0.0, 0.0, 1.0);
+    
+
+    var tMat = mult(t, mult( rx, mult(ry, s)));
+    return tMat;
 }

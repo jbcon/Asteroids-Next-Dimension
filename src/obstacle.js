@@ -139,9 +139,9 @@ function AsteroidModel(){
 	this.render = function(asteroid){
 		asteroid.theta = add(asteroid.theta, asteroid.omega);
 
-	    gl.uniform2fv(this.posLoc, asteroid.pos);
-		gl.uniform3fv(this.thetaLoc, asteroid.theta);
-		gl.uniform1f(this.scaleLoc, asteroid.s);
+		var tMatrix = transformObject(asteroid.pos, asteroid.theta, asteroid.radius);
+		gl.uniformMatrix4fv(this.tMatLoc, false, flatten(tMatrix));
+
 	    gl.drawArrays( gl.TRIANGLES, 0, this.points.length );
 	}
 
@@ -153,10 +153,8 @@ function AsteroidModel(){
 	this.vBuffer = gl.createBuffer();
     this.vPosition = gl.getAttribLocation( this.program, "vPosition" );
     this.theta = vec3(0,0,0);
-	this.thetaLoc = gl.getUniformLocation(this.program, "theta");
 	this.pos = vec2(0,0);
-	this.posLoc = gl.getUniformLocation(this.program, "pos");
-	this.scaleLoc = gl.getUniformLocation(this.program, "scale");
+	this.tMatLoc = gl.getUniformLocation(this.program, "tMat");
 
 }
 
