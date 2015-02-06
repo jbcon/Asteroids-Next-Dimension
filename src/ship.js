@@ -1,3 +1,6 @@
+/* TODO: NORMALIZE SHIP COORDINATES */
+
+
 function Bullet(xpos, ypos, theta){
 	this.pos = vec2(xpos/20.0+.15*-Math.cos(radians(90+theta)), ypos/20.0+.15*-Math.sin(radians(90+theta)));
 	this.bulletSpeed = .05;
@@ -14,6 +17,20 @@ function Bullet(xpos, ypos, theta){
 		}
 		if (this.pos[1] > 1 || this.pos[1] < -1){
 			this.pos[1] *= -1;
+		}
+
+		//avoid being stuck outside boundaries
+		if (this.pos[0] < -1){
+			this.pos[0] = -1;
+		}
+		if (this.pos[0] > 1){
+			this.pos[0] = 1;
+		}
+		if (this.pos[1] < -1){
+			this.pos[1] = -1;
+		}
+		if (this.pos[1] > 1){
+			this.pos[1] = 1;
 		}
 		this.life++;
 	}
@@ -136,12 +153,26 @@ function Ship() {
 	        }
 	    }
 
+
 	    //wrap around screen edges
 	    if (this.pos[0]-3 > 20 || this.pos[0]+3 < -20){
 			this.pos[0] *= -1;
 		}
 		if (this.pos[1]-3 > 20 || this.pos[1]+3 < -20){
 			this.pos[1] *= -1;
+		}
+
+		if (this.pos[0]+3 < -20){
+			this.pos[0] = -20-3;
+		}
+		if (this.pos[0]-3 > 20){
+			this.pos[0] = 20+3;
+		}
+		if (this.pos[1]+3 < -20){
+			this.pos[1] = -20-3;
+		}
+		if (this.pos[1]-3 > 20){
+			this.pos[1] = 20+3;
 		}
 	}
 

@@ -18,10 +18,10 @@ var score = 0;
 var lives = 3;
 var level = 1;
 
-var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
-var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
-var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
-var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightPosition = vec4(0.0, 0.0, 1.0, 0.0 );
+var lightAmbient = vec4(0.1, 0.1, 0.1, 1.0 );
+var lightDiffuse = vec4( 0.5, 0.5, 0.5, 1.0 );
+var lightSpecular = vec4( 0.7, 0.7, 0.7, 1.0 );
 
 window.onload = function init(){
     var canvas = document.getElementById( "gl-canvas" );
@@ -251,7 +251,7 @@ function transformObject(pos, theta, scaleFactor){
     var angles = radians(theta);
     var c = [Math.cos(angles[0]), Math.cos(angles[1]), Math.cos(angles[2])];
     var s = [Math.sin(angles[0]), Math.sin(angles[1]), Math.sin(angles[2])];
-    
+
     //it's column-major, don't forget!!
     var rx = rotate(theta[0], vec3(1.0, 0.0, 0.0));
     var ry = rotate(theta[1], vec3(0.0, 1.0, 0.0));
@@ -264,5 +264,28 @@ function transformObject(pos, theta, scaleFactor){
     
 
     var tMat = mult(t, mult( rx, mult(ry, s)));
+
+    /* generate inverses for the different matrices
+        they each have their own heuristic for them
+        so that makes it easy */
+    /*
+    //inverse of a rotation matrix is the transpose
+    var nRx = transpose(rx);
+    var nRy = transpose(ry);
+    var nRz = transpose(rz);
+
+    //inverse of translation matrix is reverse direction
+    var nT = translate(-pos[0], -pos[1], 0.0);
+
+    //inverse of scale matrix is shrinking
+    var nS = mat4(1.0/scaleFactor, 0.0, 0.0, 0.0,
+                    0.0, 1.0/scaleFactor, 0.0, 0.0,
+                    0.0, 0.0, 1.0/scaleFactor, 0.0,
+                    0.0, 0.0, 0.0, 1.0);
+
+    //apply them in reverse order
+    var nMatrix = mult(nS, mult(ry, mult(rx, t)));
+    */
+
     return tMat;
 }

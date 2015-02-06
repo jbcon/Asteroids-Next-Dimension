@@ -15,6 +15,8 @@ function Asteroid(xpos, ypos, angle, size, speed){
 	this.speed = speed;
 	this.radius = this.s/20.0;
 
+	console.log(angle);
+
 	this.move = function(){
 		this.pos[0] += speed * Math.cos(radians(this.trueDirection));
 		this.pos[1] += speed * Math.sin(radians(this.trueDirection));
@@ -26,6 +28,21 @@ function Asteroid(xpos, ypos, angle, size, speed){
 		if (this.pos[1]-this.radius > 1 || this.pos[1]+this.radius < -1){
 			this.pos[1] *= -1;
 		}
+
+		//avoid being stuck outside boundaries
+		if (this.pos[0]+this.radius < -1){
+			this.pos[0] = -1-this.radius;
+		}
+		if (this.pos[0]-this.radius > 1){
+			this.pos[0] = 1+this.radius;
+		}
+		if (this.pos[1]+this.radius < -1){
+			this.pos[1] = -1-this.radius;
+		}
+		if (this.pos[1]-this.radius > 1){
+			this.pos[1] = 1+this.radius;
+		}
+		console.log("Position: " + this.pos);
 	}
 }
 
@@ -38,9 +55,9 @@ function AsteroidModel(){
     this.pointMapping = {}
 
     this.normals = [];
-    this.materialAmbient = vec4( 1.0, 0.3, 0.0, 1.0 );
-    this.materialDiffuse = vec4( 1.0, 0.3, 0.0, 1.0 );
-    this.materialSpecular = vec4( 0.3, 0.3, 0.3, 1.0 );
+    this.materialAmbient = vec4( 0.0, 0.0, 0.0, 1.0 );
+    this.materialDiffuse = vec4( 0.3, 0.2, 0.0, 1.0 );
+    this.materialSpecular = vec4( 0.0, 0.0, 0.0, 1.0 );
     this.materialShininess = 1.0;
     this.ambientProduct = mult(lightAmbient, this.materialAmbient);
     this.diffuseProduct = mult(lightDiffuse, this.materialDiffuse);
@@ -141,6 +158,7 @@ function AsteroidModel(){
 
 		var tMatrix = transformObject(asteroid.pos, asteroid.theta, asteroid.radius);
 		gl.uniformMatrix4fv(this.tMatLoc, false, flatten(tMatrix));
+		//gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "nMatrix"), nMatrix);
 
 	    gl.drawArrays( gl.TRIANGLES, 0, this.points.length );
 	}

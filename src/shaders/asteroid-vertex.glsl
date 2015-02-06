@@ -16,11 +16,6 @@ void main()
     E =  -normalize(pos);
     N = normalize( (vNormal).xyz);
 
-    mat3 normalMatrix = mat3(tMat[0][0], tMat[0][1], tMat[0][2],
-    						tMat[1][0], tMat[1][1], tMat[1][2],
-    						tMat[2][0], tMat[2][1], tMat[2][2]);
-   	//normalMatrix = inverse(normalMatrix);
-
     gl_Position = tMat * vPosition;
 
     fColor = vColor;
