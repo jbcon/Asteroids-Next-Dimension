@@ -1,0 +1,44 @@
+﻿body{
+    background-color: #111111;
+    color: #DDDDDD;
+}
+
+a:link{
+    color: lightblue;
+}
+
+a:visited{
+    color: palevioletred;
+}
+
+header{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+    background-color: #DDDDDD;
+    text-align: center;
+    color:#111111;
+}
+
+nav{
+    float: left;
+    margin: 50px;
+}
+
+#game{
+    font-family: 'Century Gothic';
+    float:left;
+    margin-top: -10px;
+}
+
+#Lives{
+    float:left;
+    text-align:left;
+}
+
+#Score{
+    text-align:center;
+}
+
+#Level{
+    float:right;
+    text-align: right;
+}

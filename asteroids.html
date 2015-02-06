@@ -9,21 +9,31 @@
 <script type="text/javascript" src="src/obstacle.js"></script>
 <script type="text/javascript" src="src/asteroids.js"></script>
 <script type="text/javascript" src="src/data_points.js"></script>
+<link rel="stylesheet" type="text/css" href="asteroids.css"></link>
 </head>
 
 <body>
-	<h1>Asteroids: the Next Dimension</h1>
-	<p id = "Lives">Loading...</p>
-	<p id = "Score">Score: 0</p>
-	<p id = "Level">Level 1</p>
-	<canvas id="gl-canvas" width="512" height="512">
-	Oops ... your browser doesn't support the HTML5 canvas element
-	</canvas>
+    <header>
+	    <h1>John Conover</h1>
+    </header>
+    <nav>
+        <p>Home</p>
+    </nav>
+    <div id="game">
+        <h2>Asteroids: the Next Dimension</h2>
+	    <p id = "Lives">Loading...</p>
+	    <p id = "Level">Level 1</p>
+        <p id="Score">Score: 0</p>
+	    <canvas id="gl-canvas" width="512" height="512">
+	    Oops ... your browser doesn't support the HTML5 canvas element
+	    </canvas>
 
-	<p>Controls: W to thrust, A and D to turn left and right, Shift to fire.</p>
+	    <p>Controls: W to thrust, A and D to turn left and right, Shift to fire.</p>
 
-	<p>by John Conover and Chris Ngai</p>
+	    <p>by John Conover and Chris Ngai</p>
+        <p>Originally concieved as a term project for ECSE-4750 Computer Graphics, Fall 2014</p>
 
-	<a href = "http://github.com/jbcon/Asteroids-Next-Dimension" target = _blank>View the GitHub Repository</a>
+	    <a href = "http://github.com/jbcon/Asteroids-Next-Dimension" target = _blank>View the GitHub Repository</a>
+    </div>
 </body>
 </html>
